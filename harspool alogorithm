@@ -1,0 +1,77 @@
+#include <iostream>
+#include <cstring>
+#include <iomanip> // for formatting
+using namespace std;
+
+int shiftTable[256];
+
+void shiftTableFunction(char pattern[])
+{
+    int m = strlen(pattern);
+
+    for(int i = 0; i < 256; i++)
+        shiftTable[i] = m;
+    for(int j = 0; j < m - 1; j++)
+        shiftTable[(int)pattern[j]] = m - 1 - j;
+
+    // PRINT INTERMEDIATE: Shift Table
+    cout << "\n--- Shift Table ---" << endl;
+    for(int j = 0; j < m - 1; j++) {
+        cout << pattern[j] << ": " << shiftTable[(int)pattern[j]] << "  ";
+    }
+    cout << "Others: " << m << "\n" << endl;
+}
+
+int horspool(char text[], char pattern[])
+{
+    int n = strlen(text);
+    int m = strlen(pattern);
+
+    shiftTableFunction(pattern);
+
+    int i = m - 1;
+    int step = 1;
+
+    while(i < n)
+    {
+        cout << "Step " << step++ << ":" << endl;
+        cout << text << endl;
+        cout << setw(i + 1) << pattern << endl;
+
+        int k = 0;
+        while(k < m && pattern[m-1-k] == text[i-k])
+            k++;
+
+        if(k == m) {
+            cout << "Result: Match found!" << endl;
+            return i - m + 1;
+        }
+        else {
+            int shift = shiftTable[(int)text[i]];
+            cout << "Mismatch! Shifting by: " << shift << "\n" << endl;
+            i = i + shift;
+        }
+    }
+
+    return -1;
+}
+
+int main()
+{
+    char text[100], pattern[100];
+
+    cout << "Enter text: ";
+    cin >> text;
+
+    cout << "Enter pattern: ";
+    cin >> pattern;
+
+    int pos = horspool(text, pattern);
+
+    if(pos == -1)
+        cout << "\nPattern not found" << endl;
+    else
+        cout << "\nPattern found at position: " << pos << endl;
+
+    return 0;
+}
